@@ -1,27 +1,33 @@
 {
   "expo": {
-    "name": "conversor-idiomas",
+    "name": "Traductor en Vivo",
     "slug": "conversor-idiomas",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0a0a1a"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.lisandro1313.traductorenvivo",
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Necesitamos acceso al micrófono para traducir tu voz en tiempo real.",
+        "NSMicrophoneUsageDescription": "Necesitamos acceso al micrófono para escuchar y traducir tu voz."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#0a0a1a"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.lisandro1313.traductorenvivo",
+      "permissions": ["RECORD_AUDIO"],
+      "edgeToEdgeEnabled": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
