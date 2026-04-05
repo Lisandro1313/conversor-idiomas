@@ -4,16 +4,22 @@ import {
   ScrollView, ActivityIndicator, Animated,
 } from 'react-native';
 import * as Speech from 'expo-speech';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useVoice } from '../hooks/useVoice';
 import { IDIOMAS, Idioma, traducir, getSugerencias } from '../data/idiomas';
 import SelectorIdioma from './SelectorIdioma';
 
-interface Mensaje {
+export interface Mensaje {
   id: number;
   original: string;
   traducido: string;
   lado: 'izquierda' | 'derecha';
+  idiomaOrig: string;
+  idiomaTrad: string;
+  fecha?: string;
 }
+
+const HISTORIAL_KEY = 'conversor_historial';
 
 export default function ConversacionScreen() {
   const [idiomaIzq, setIdiomaIzq] = useState<Idioma>(IDIOMAS[0]); // Español
@@ -60,10 +66,21 @@ export default function ConversacionScreen() {
         original: texto,
         traducido,
         lado,
+        idiomaOrig: desde.nombre,
+        idiomaTrad: hacia.nombre,
+        fecha: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
       };
-      setMensajes(prev => [...prev, nuevoMensaje]);
+      setMensajes(prev => {
+        const nuevos = [...prev, nuevoMensaje];
+        // Guardar historial (máximo 50 entradas)
+        AsyncStorage.getItem(HISTORIAL_KEY).then(raw => {
+          const hist: Mensaje[] = raw ? JSON.parse(raw) : [];
+          const actualizado = [nuevoMensaje, ...hist].slice(0, 50);
+          AsyncStorage.setItem(HISTORIAL_KEY, JSON.stringify(actualizado));
+        });
+        return nuevos;
+      });
       setSugerencias(getSugerencias(texto));
-      // Hablar la traducción automáticamente
       Speech.speak(traducido, { language: hacia.codigoVoz, rate: 0.9 });
     } catch {
       // silencio si falla
